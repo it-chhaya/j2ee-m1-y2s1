@@ -18,6 +18,25 @@ public class ProductDaoImpl implements ProductDao {
 
 
     @Override
+    public int deleteByCode(String code) {
+        try {
+            final String SQL = """
+                    DELETE
+                    FROM products
+                    WHERE code = ?
+                    """;
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setString(1, code);
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
+    @Override
     public int insert(Product product) {
         try {
             final String SQL = """

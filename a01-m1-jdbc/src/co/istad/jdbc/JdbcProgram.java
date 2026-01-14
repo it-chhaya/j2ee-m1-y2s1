@@ -32,7 +32,7 @@ public class JdbcProgram {
                         List<Product> products = productDao.findAll();
                         ViewUtil.printProductList(products);
                     } catch (RuntimeException e) {
-                        System.out.println("Database is errored");
+                        ViewUtil.printHeader(e.getMessage());
                     }
                 }
                 case 2 -> System.out.println("Search");
@@ -52,6 +52,25 @@ public class JdbcProgram {
                             ViewUtil.printHeader("Insert a new product successfully..!");
                         } else {
                             ViewUtil.printHeader("Insert operation is not affected");
+                        }
+                    } catch (RuntimeException e) {
+                        ViewUtil.printHeader(e.getMessage());
+                    }
+                }
+                case 5 -> {
+                    ViewUtil.printHeader("Delete a product by code");
+                    String code = InputUtil.getText("Enter code: ");
+                    try {
+                        String confirmation = InputUtil.getText("Are you sure to delete? [Y/n]");
+                        if (confirmation.equalsIgnoreCase("y")) {
+                            int affectedRow = productDao.deleteByCode(code);
+                            if (affectedRow > 0) {
+                                ViewUtil.printHeader("Deleted product successfully..!");
+                            } else {
+                                ViewUtil.printHeader("Deleted operation is not affected");
+                            }
+                        } else {
+                            ViewUtil.printHeader("Delete operation cancelled");
                         }
                     } catch (RuntimeException e) {
                         ViewUtil.printHeader(e.getMessage());
