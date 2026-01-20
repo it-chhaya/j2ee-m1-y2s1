@@ -60,7 +60,33 @@ public class ProductDaoImpl implements ProductDao {
         Product oldProduct = findByCode(code)
                 .orElseThrow(() -> new RuntimeException("Product code not in database..!"));
 
-        return 0;
+        // Step 2. Start partially update
+        if (!updateProduct.getName().isBlank())
+            oldProduct.setName(updateProduct.getName());
+
+        if (updateProduct.getPrice() != null)
+            oldProduct.setPrice(updateProduct.getPrice());
+
+        if (updateProduct.getQty() != null)
+            oldProduct.setQty(updateProduct.getQty());
+
+        final String SQL = """
+                UPDATE products
+                SET name = ?, price = ?, qty = ?
+                WHERE code = ?
+                """;
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setString(1, oldProduct.getName());
+            pstmt.setBigDecimal(2, oldProduct.getPrice());
+            pstmt.setInt(3, oldProduct.getQty());
+            pstmt.setString(4, code);
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 

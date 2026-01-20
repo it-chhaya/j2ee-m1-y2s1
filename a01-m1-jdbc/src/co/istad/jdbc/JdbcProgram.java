@@ -70,7 +70,11 @@ public class JdbcProgram {
                     updateProduct.setQty(qty);
 
                     try {
-                        productDao.updateByCode(code, updateProduct);
+                        int affectedRow = productDao.updateByCode(code, updateProduct);
+                        if (affectedRow > 0)
+                            ViewUtil.printHeader("Product updated successfully");
+                        else
+                            ViewUtil.printHeader("Product update failed..!");
                     } catch (RuntimeException e) {
                         ViewUtil.printHeader(e.getMessage());
                     }
