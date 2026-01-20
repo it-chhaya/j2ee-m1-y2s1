@@ -57,6 +57,24 @@ public class JdbcProgram {
                         ViewUtil.printHeader(e.getMessage());
                     }
                 }
+                case 4 -> {
+                    ViewUtil.printHeader("Update a product by code");
+                    String code = InputUtil.getText("Enter code: ");
+                    String name = InputUtil.getText("Enter name: ");
+                    BigDecimal price = InputUtil.getMoney("Enter price: ");
+                    Integer qty = InputUtil.getInteger("Enter qty: ");
+
+                    Product updateProduct = new Product();
+                    updateProduct.setName(name);
+                    updateProduct.setPrice(price);
+                    updateProduct.setQty(qty);
+
+                    try {
+                        productDao.updateByCode(code, updateProduct);
+                    } catch (RuntimeException e) {
+                        ViewUtil.printHeader(e.getMessage());
+                    }
+                }
                 case 5 -> {
                     ViewUtil.printHeader("Delete a product by code");
                     String code = InputUtil.getText("Enter code: ");

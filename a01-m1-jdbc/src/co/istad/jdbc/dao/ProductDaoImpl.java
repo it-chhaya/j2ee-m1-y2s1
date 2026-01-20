@@ -6,6 +6,7 @@ import co.istad.jdbc.model.Product;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // Concrete class implements interface (super class)
 public class ProductDaoImpl implements ProductDao {
@@ -14,6 +15,52 @@ public class ProductDaoImpl implements ProductDao {
 
     public ProductDaoImpl() {
         conn = DbConfig.getInstance();
+    }
+
+
+    @Override
+    public Optional<Product> findByCode(String code) {
+        try {
+            final String SQL = """
+                    SELECT *
+                    FROM products
+                    WHERE code = ?
+                    """;
+
+            PreparedStatement stmt = conn.prepareStatement(SQL);
+            stmt.setString(1, code);
+
+            ResultSet rs = stmt.executeQuery();
+
+            // Single row
+            if(rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setCode(rs.getString("code"));
+                product.setName(rs.getString("name"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setQty(rs.getInt("qty"));
+                product.setDeleted(rs.getBoolean("is_deleted"));
+                return Optional.of(product);
+            }
+
+            return Optional.empty();
+
+        } catch (SQLException e) {
+            System.out.println("SQL errored: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
+    @Override
+    public int updateByCode(String code, Product updateProduct) {
+        // Update partially (some parts of data)
+        // Step 1. Load old data
+        Product oldProduct = findByCode(code)
+                .orElseThrow(() -> new RuntimeException("Product code not in database..!"));
+
+        return 0;
     }
 
 
@@ -69,6 +116,7 @@ public class ProductDaoImpl implements ProductDao {
             final String sql = """
                     SELECT *
                     FROM products
+                    ORDER BY id DESC
                     """;
 
             // Step 6: Handle ResultSet

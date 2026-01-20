@@ -3,8 +3,20 @@ package co.istad.jdbc.dao;
 import co.istad.jdbc.model.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductDao {
+
+
+    Optional<Product> findByCode(String code);
+
+
+    /**
+     * Update an existing product by code (name, price, qty)
+     * @param code is identifier of product
+     * @param updateProduct is new data
+     */
+    int updateByCode(String code, Product updateProduct);
 
     /**
      * Delete an existing product by code
@@ -25,5 +37,4 @@ public interface ProductDao {
     // * Expected return value => multiple rows of product
     // * Parameters
     List<Product> findAll();
-
 }
